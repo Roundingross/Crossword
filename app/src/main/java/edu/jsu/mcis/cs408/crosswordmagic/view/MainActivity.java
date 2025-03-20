@@ -1,7 +1,6 @@
 package edu.jsu.mcis.cs408.crosswordmagic.view;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.os.Bundle;
 import edu.jsu.mcis.cs408.crosswordmagic.R;
@@ -25,9 +24,10 @@ public class MainActivity extends AppCompatActivity {
 
         /* Register View(s) and Model(s) with Controller */
         controller.addModel(model);
+    }
 
-        /* Get Test Property (tests MVC framework) */
-        controller.getTestProperty(CrosswordMagicController.TEST_PROPERTY);
+    public CrosswordMagicController getController() {
+        return controller;
     }
 
 }

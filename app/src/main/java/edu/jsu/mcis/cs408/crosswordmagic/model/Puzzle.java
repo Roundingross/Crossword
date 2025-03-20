@@ -1,7 +1,5 @@
 package edu.jsu.mcis.cs408.crosswordmagic.model;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;

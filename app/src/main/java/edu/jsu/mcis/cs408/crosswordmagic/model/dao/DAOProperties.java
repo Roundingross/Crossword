@@ -2,7 +2,6 @@ package edu.jsu.mcis.cs408.crosswordmagic.model.dao;
 
 import android.content.Context;
 
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
@@ -32,7 +31,7 @@ public class DAOProperties {
         String fullKey = prefix + "." + key;
         String property = PROPERTIES.getProperty(fullKey);
 
-        if (property == null || property.trim().length() == 0)
+        if (property == null || property.trim().isEmpty())
             property = null;
 
         return property;

@@ -1,5 +1,7 @@
 package edu.jsu.mcis.cs408.crosswordmagic.model;
 
+import android.util.Log;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -20,6 +22,7 @@ public abstract class AbstractModel {
     }
 
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+        Log.d("DEBUG", "AbstractModel: firing property change: " + propertyName);
         propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
     }
 

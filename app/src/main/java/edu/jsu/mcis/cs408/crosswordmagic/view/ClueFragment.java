@@ -11,10 +11,11 @@ import androidx.fragment.app.Fragment;
 import java.beans.PropertyChangeEvent;
 import edu.jsu.mcis.cs408.crosswordmagic.R;
 import edu.jsu.mcis.cs408.crosswordmagic.controller.CrosswordMagicController;
+import edu.jsu.mcis.cs408.crosswordmagic.model.Puzzle;
+import edu.jsu.mcis.cs408.crosswordmagic.model.dao.DAOFactory;
 
 public class ClueFragment extends Fragment implements AbstractView {
     private final String TAG = "ClueFragment";
-    private CrosswordMagicController controller;
     private TextView aContainer, dContainer;
 
     @Nullable
@@ -27,9 +28,18 @@ public class ClueFragment extends Fragment implements AbstractView {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        CrosswordMagicController controller = ((MainActivity) getActivity()).getController();
+        DAOFactory daoFactory = new DAOFactory(getContext());
+
+        Puzzle puzzle = daoFactory.getPuzzleDAO().find(1);
+
         aContainer = view.findViewById(R.id.aContainer);
         dContainer = view.findViewById(R.id.dContainer);
 
+        if (puzzle != null) {
+            aContainer.setText(puzzle.getCluesAcross());
+            dContainer.setText(puzzle.getCluesDown());
+        }
     }
 
     @Override
@@ -37,6 +47,10 @@ public class ClueFragment extends Fragment implements AbstractView {
         String name = evt.getPropertyName();
         String value = evt.getNewValue().toString();
 
+        if (name.equals(CrosswordMagicController.GRID_DIMENSION_PROPERTY) && value instanceof String) {
+            aContainer.setText("Updated Across Clues: " + value);
+            dContainer.setText("Updated Down Clues: " + value);
+        }
 
     }
 }

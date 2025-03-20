@@ -15,10 +15,6 @@ import edu.jsu.mcis.cs408.crosswordmagic.R;
 
 public class TabLayoutContainer extends Fragment {
 
-    private ViewPager2 viewPager;
-    private TabLayout tabLayout;
-    private FragmentStateAdapter adapter;
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -29,9 +25,9 @@ public class TabLayoutContainer extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewPager = view.findViewById(R.id.pager);
-        tabLayout = view.findViewById(R.id.tab_layout);
-        adapter = new ViewPagerAdapter(this);
+        ViewPager2 viewPager = view.findViewById(R.id.pager);
+        TabLayout tabLayout = view.findViewById(R.id.tab_layout);
+        FragmentStateAdapter adapter = new ViewPagerAdapter(this);
         viewPager.setAdapter(adapter);
 
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
@@ -41,18 +37,15 @@ public class TabLayoutContainer extends Fragment {
     }
 
     private static class ViewPagerAdapter extends FragmentStateAdapter {
-
         public ViewPagerAdapter(@NonNull Fragment fragment) {
             super(fragment);
         }
-
         @NonNull
         @Override
         public Fragment createFragment(int position) {
             if (position == 0) return new PuzzleFragment();
             else return new ClueFragment();
         }
-
         @Override
         public int getItemCount() {
             return 2; // Two tabs: Puzzle and Clues
