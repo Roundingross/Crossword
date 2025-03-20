@@ -20,6 +20,7 @@ public abstract class AbstractController implements PropertyChangeListener {
     }
 
     public void addModel(AbstractModel model) {
+        Log.d("DEBUG", "Controller Added Model: " + model.getClass().getSimpleName());
         models.add(model);
         model.addPropertyChangeListener(this);
     }
