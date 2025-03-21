@@ -1,7 +1,6 @@
 package edu.jsu.mcis.cs408.crosswordmagic.view;
 
 import androidx.appcompat.app.AppCompatActivity;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
