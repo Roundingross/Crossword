@@ -83,6 +83,7 @@ public class WordDAO {
         return result;
     }
 
+
     /* return an individual word entry from the database */
     public Word find(int id) {
         /* use this method if there is NOT already a SQLiteDatabase open */
