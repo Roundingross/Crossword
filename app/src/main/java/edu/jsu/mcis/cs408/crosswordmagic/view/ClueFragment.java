@@ -11,8 +11,6 @@ import androidx.fragment.app.Fragment;
 import java.beans.PropertyChangeEvent;
 import edu.jsu.mcis.cs408.crosswordmagic.R;
 import edu.jsu.mcis.cs408.crosswordmagic.controller.CrosswordMagicController;
-import edu.jsu.mcis.cs408.crosswordmagic.model.Puzzle;
-import edu.jsu.mcis.cs408.crosswordmagic.model.dao.DAOFactory;
 
 public class ClueFragment extends Fragment implements AbstractView {
     private final String TAG = "ClueFragment";
@@ -27,30 +25,35 @@ public class ClueFragment extends Fragment implements AbstractView {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        CrosswordMagicController controller = ((MainActivity) getActivity()).getController();
-        DAOFactory daoFactory = new DAOFactory(getContext());
-
-        Puzzle puzzle = daoFactory.getPuzzleDAO().find(1);
-
         aContainer = view.findViewById(R.id.aContainer);
         dContainer = view.findViewById(R.id.dContainer);
 
-        if (puzzle != null) {
-            aContainer.setText(puzzle.getCluesAcross());
-            dContainer.setText(puzzle.getCluesDown());
+        // Get controller
+        CrosswordMagicController controller = ((MainActivity) getActivity()).getController();
+        controller.addView(this);
+
+        // Load clue data
+        loadClues();
+    }
+
+    // Load clue data
+    public void loadClues() {
+        CrosswordMagicController controller = ((MainActivity) getActivity()).getController();
+        controller.getCluesAcross();
+        controller.getCluesDown();
+    }
+
+    // Update clue view
+    public void updateClues(String across, String down) {
+        if (across != null) {
+            aContainer.setText(across);
+        }
+        if (down != null) {
+            dContainer.setText(down);
         }
     }
 
-    @Override
-    public void modelPropertyChange(PropertyChangeEvent evt) {
-        String name = evt.getPropertyName();
-        String value = evt.getNewValue().toString();
-
-        if (name.equals(CrosswordMagicController.GRID_DIMENSION_PROPERTY) && value instanceof String) {
-            aContainer.setText("Updated Across Clues: " + value);
-            dContainer.setText("Updated Down Clues: " + value);
-        }
-
+    // Handle property change
+    public void modelPropertyChange(final PropertyChangeEvent evt) {
     }
 }

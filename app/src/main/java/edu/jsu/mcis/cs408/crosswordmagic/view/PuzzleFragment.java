@@ -1,7 +1,6 @@
 package edu.jsu.mcis.cs408.crosswordmagic.view;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,26 +31,35 @@ public class PuzzleFragment extends Fragment implements AbstractView {
         // Get grid view
         gridView = view.findViewById(R.id.grid);
 
-        Log.d("DEBUG", "PuzzleFragment Registered with controller" + controller);
-
-        // Get updates from controller
-        controller.getGridDimensions();
-        controller.getGridLetters();
-        controller.getGridNumbers();
-
-        Log.d("DEBUG", "PuzzleFragment PuzzleFragment created");
+        // Load grid data
+        loadGrid();
     }
 
-    @Override
-    public void modelPropertyChange(PropertyChangeEvent evt) {
-        Log.d("DEBUG", "PuzzleFragment: Received update: " + evt.getPropertyName());
+    // Load grid data
+    public void loadGrid() {
+        CrosswordMagicController controller = ((MainActivity) getActivity()).getController();
+        controller.getGridLetters();
+        controller.getGridNumbers();
+        controller.getGridDimensions();
+    }
 
+    // Update puzzle view
+    public void updatePuzzle(Character[][] letters, Integer[][] numbers, Integer[] dimension) {
         if (gridView != null) {
-            Log.d("DEBUG", "PuzzleFragment: Forwarding update to gridView: " + evt.getPropertyName());
-            gridView.modelPropertyChange(evt);
-        } else {
-            Log.e("DEBUG", "PuzzleFragment: GridView is NULL!");
+            if (letters != null) {
+                gridView.setLetters(letters);
+            }
+            if (numbers != null) {
+                gridView.setNumbers(numbers);
+            }
+            if (dimension != null && dimension.length == 2) {
+                gridView.setGridSize(dimension[0], dimension[1]);
+            }
         }
     }
 
+    // Handle property change
+    @Override
+    public void modelPropertyChange(PropertyChangeEvent evt) {
+    }
 }

@@ -1,7 +1,6 @@
 package edu.jsu.mcis.cs408.crosswordmagic.model;
 
 import android.util.Log;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 

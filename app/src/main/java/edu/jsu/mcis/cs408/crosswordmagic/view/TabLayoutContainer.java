@@ -25,17 +25,22 @@ public class TabLayoutContainer extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Initialize ViewPager2 and TabLayout
         ViewPager2 viewPager = view.findViewById(R.id.pager);
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);
         FragmentStateAdapter adapter = new ViewPagerAdapter(this);
         viewPager.setAdapter(adapter);
 
+        // Connect TabLayout with ViewPager2
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             if (position == 0) tab.setText("Puzzle");
             else if (position == 1) tab.setText("Clues");
         }).attach();
     }
 
+    /**
+     * ViewPagerAdapter class to manage fragments in ViewPager2
+     */
     private static class ViewPagerAdapter extends FragmentStateAdapter {
         public ViewPagerAdapter(@NonNull Fragment fragment) {
             super(fragment);
@@ -46,9 +51,10 @@ public class TabLayoutContainer extends Fragment {
             if (position == 0) return new PuzzleFragment();
             else return new ClueFragment();
         }
+        // Two tabs: Puzzle and Clues
         @Override
         public int getItemCount() {
-            return 2; // Two tabs: Puzzle and Clues
+            return 2;
         }
     }
 }

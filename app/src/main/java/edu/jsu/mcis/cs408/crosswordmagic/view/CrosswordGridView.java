@@ -80,7 +80,7 @@ public class CrosswordGridView extends View implements AbstractView {
 
     private void drawLetters(Canvas canvas) {
         if (letters != null) {
-            float TEXT_LETTER_SCALE = 1.5f;
+            float TEXT_LETTER_SCALE = 4f;
             float letterTextSize = (squareWidth / TEXT_LETTER_SCALE);
             gridTextPaint.setTextSize(letterTextSize * getResources().getDisplayMetrics().density);
             for (int y = 0; y < letters.length; ++y) {
@@ -88,7 +88,7 @@ public class CrosswordGridView extends View implements AbstractView {
                     String text = String.valueOf(letters[y][x]);
                     int width = (int)gridTextPaint.measureText(text);
                     int xBeginLetter = ((x * squareWidth) + xBegin) + ((squareWidth - width) / 2);
-                    int yBeginLetter = (y * squareWidth) + yBegin;
+                    int yBeginLetter = (y * squareWidth) + yBegin + (int)(squareHeight * 0.3f); // shift letter downward
                     StaticLayout staticLayout = new StaticLayout(text, gridTextPaint, width, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
                     canvas.save();
                     canvas.translate(xBeginLetter, yBeginLetter);
@@ -221,6 +221,21 @@ public class CrosswordGridView extends View implements AbstractView {
             }
             return false;
         }
+    }
+
+    // Getters for view updates
+    public void setLetters(Character[][] letters) {
+        this.letters = letters;
+        invalidate();
+    }
+    public void setNumbers(Integer[][] numbers) {
+        this.numbers = numbers;
+        invalidate();
+    }
+    public void setGridSize(int width, int height) {
+        this.gridWidth = width;
+        this.gridHeight = height;
+        invalidate();
     }
 }
 

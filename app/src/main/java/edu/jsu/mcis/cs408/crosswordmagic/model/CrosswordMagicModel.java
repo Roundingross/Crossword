@@ -2,7 +2,6 @@ package edu.jsu.mcis.cs408.crosswordmagic.model;
 
 import android.content.Context;
 import android.util.Log;
-
 import edu.jsu.mcis.cs408.crosswordmagic.controller.CrosswordMagicController;
 import edu.jsu.mcis.cs408.crosswordmagic.model.dao.DAOFactory;
 import edu.jsu.mcis.cs408.crosswordmagic.model.dao.PuzzleDAO;
@@ -16,15 +15,11 @@ public class CrosswordMagicModel extends AbstractModel {
         int DEFAULT_PUZZLE_ID = 1;
         this.puzzle = puzzleDAO.find(DEFAULT_PUZZLE_ID);
 
-        Log.d("DEBUG", "CrosswordMagicModel Adding controller as property change listener");
-
         fireGridUpdates();
     }
 
     public void fireGridUpdates() {
         if (puzzle != null) {
-            Log.d("DEBUG", "CrosswordMagicModel Firing grid updates...");
-
             firePropertyChange(CrosswordMagicController.GRID_LETTERS_PROPERTY, null, puzzle.getLetters());
             firePropertyChange(CrosswordMagicController.GRID_NUMBERS_PROPERTY, null, puzzle.getNumbers());
             firePropertyChange(CrosswordMagicController.GRID_DIMENSION_PROPERTY, null, new Integer[] {puzzle.getHeight(), puzzle.getWidth()});
@@ -33,16 +28,23 @@ public class CrosswordMagicModel extends AbstractModel {
         }
     }
 
-    public Character[][] getGridLetters() {
-        return (puzzle != null) ? puzzle.getLetters() : null;
+    public void getGridLetters() {
+        firePropertyChange(CrosswordMagicController.GRID_LETTERS_PROPERTY, null, puzzle.getLetters());
     }
 
-    public Integer[][] getGridNumbers() {
-        return (puzzle != null) ? puzzle.getNumbers() : null;
+    public void getGridNumbers() {
+        firePropertyChange(CrosswordMagicController.GRID_NUMBERS_PROPERTY, null, puzzle.getNumbers());
     }
 
-    public Integer[] getGridDimension() {
-        return (puzzle != null) ? new Integer[] {puzzle.getHeight(), puzzle.getWidth()} : null;
+    public void getGridDimension() {
+        firePropertyChange(CrosswordMagicController.GRID_DIMENSION_PROPERTY, null, new Integer[] {puzzle.getHeight(), puzzle.getWidth()});
     }
 
+    public void getCluesAcross() {
+        firePropertyChange(CrosswordMagicController.CLUES_ACROSS_PROPERTY, null, puzzle.getCluesAcross());
+    }
+
+    public void getCluesDown() {
+        firePropertyChange(CrosswordMagicController.CLUES_DOWN_PROPERTY, null, puzzle.getCluesDown());
+    }
 }
