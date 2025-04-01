@@ -2,8 +2,6 @@ package edu.jsu.mcis.cs408.crosswordmagic.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-
 import edu.jsu.mcis.cs408.crosswordmagic.R;
 import edu.jsu.mcis.cs408.crosswordmagic.controller.CrosswordMagicController;
 import edu.jsu.mcis.cs408.crosswordmagic.model.CrosswordMagicModel;
@@ -23,12 +21,20 @@ public class MainActivity extends AppCompatActivity {
         controller = new CrosswordMagicController();
         controller.addModel(model);
 
-        Log.d("DEBUG", "MainActivity: Controller Registered with Model");
+        // Load puzzle saved state
+        controller.loadState(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (controller.getPuzzle() != null) {
+            controller.getPuzzle().saveState(this);
+        }
     }
 
 
     public CrosswordMagicController getController() {
         return controller;
     }
-
 }

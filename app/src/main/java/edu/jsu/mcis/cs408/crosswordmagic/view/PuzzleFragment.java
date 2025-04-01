@@ -1,9 +1,11 @@
 package edu.jsu.mcis.cs408.crosswordmagic.view;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -33,6 +35,17 @@ public class PuzzleFragment extends Fragment implements AbstractView {
 
         // Load grid data
         loadGrid();
+
+        Button clearButton = view.findViewById(R.id.clear_button);
+        clearButton.setOnClickListener(v -> {
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity != null) {
+                controller.clearPuzzleProgress(activity);
+            } else {
+                Log.e("PuzzleFragment", "MainActivity is null in clearButton click");
+            }
+        });
+
     }
 
     // Load grid data

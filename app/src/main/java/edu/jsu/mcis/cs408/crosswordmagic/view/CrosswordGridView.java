@@ -1,24 +1,28 @@
 package edu.jsu.mcis.cs408.crosswordmagic.view;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.text.InputType;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import java.beans.PropertyChangeEvent;
-import java.util.Arrays;
-import java.util.Locale;
-
+import edu.jsu.mcis.cs408.crosswordmagic.R;
 import edu.jsu.mcis.cs408.crosswordmagic.controller.CrosswordMagicController;
+import edu.jsu.mcis.cs408.crosswordmagic.model.WordDirection;
 
 public class CrosswordGridView extends View implements AbstractView {
     private final Paint gridPaint;
@@ -27,6 +31,7 @@ public class CrosswordGridView extends View implements AbstractView {
     private int squareWidth, squareHeight, xBegin, yBegin, xEnd, yEnd;
     private Character[][] letters;
     private Integer[][] numbers;
+    private String lastGuess = "";
 
     public CrosswordGridView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -39,16 +44,12 @@ public class CrosswordGridView extends View implements AbstractView {
         gridPaint.setStyle(Paint.Style.STROKE);
         setOnTouchListener(new OnTouchHandler(context));
 
-        Log.d("DEBUG", "CrosswordGridView Created");
         CrosswordMagicController controller = ((MainActivity) context).getController();
         controller.addView(this);
-
-        Log.d("DEBUG", "CrosswordGridView Registered with controller");
 
         controller.getGridDimensions();
         controller.getGridLetters();
         controller.getGridNumbers();
-
     }
 
     @Override
@@ -75,7 +76,6 @@ public class CrosswordGridView extends View implements AbstractView {
             drawNumbers(canvas);
             drawLetters(canvas);
         }
-
     }
 
     private void drawLetters(Canvas canvas) {
@@ -94,18 +94,14 @@ public class CrosswordGridView extends View implements AbstractView {
                     canvas.translate(xBeginLetter, yBeginLetter);
                     staticLayout.draw(canvas);
                     canvas.restore();
-
                 }
-
             }
-
         }
-
     }
 
     private void drawNumbers(Canvas canvas) {
         if (numbers != null) {
-            float TEXT_NUMBER_SCALE = 4.75f;
+            float TEXT_NUMBER_SCALE = 7f;
             float numberTextSize = (squareWidth / TEXT_NUMBER_SCALE);
             gridTextPaint.setTextSize(numberTextSize * getResources().getDisplayMetrics().density);
             for (int y = 0; y < numbers.length; ++y) {
@@ -121,13 +117,9 @@ public class CrosswordGridView extends View implements AbstractView {
                         staticLayout.draw(canvas);
                         canvas.restore();
                     }
-
                 }
-
             }
-
         }
-
     }
 
     private void drawGrid(Canvas canvas) {
@@ -171,32 +163,59 @@ public class CrosswordGridView extends View implements AbstractView {
         String name = evt.getPropertyName();
         Object value = evt.getNewValue();
 
-        Log.d("DEBUG", "CrosswordGridView Property changed: " + name);
+        switch (name) {
+            case CrosswordMagicController.GRID_LETTERS_PROPERTY:
+                if (value instanceof Character[][]) {
+                    this.letters = (Character[][]) value;
+                    invalidate();
+                }
+                break;
+            case CrosswordMagicController.GRID_NUMBERS_PROPERTY:
+                if (value instanceof Integer[][]) {
+                    this.numbers = (Integer[][]) value;
+                    invalidate();
+                }
+                break;
+            case CrosswordMagicController.GRID_DIMENSION_PROPERTY:
+                if (value instanceof Integer[]) {
+                    Integer[] dimension = (Integer[]) value;
+                    this.gridHeight = dimension[0];
+                    this.gridWidth = dimension[1];
+                    invalidate();
+                }
+                break;
+            case CrosswordMagicController.GUESS_RESULT_PROPERTY: {
+                if (value instanceof android.util.Pair) {
+                    android.util.Pair<Integer, WordDirection> result = (android.util.Pair<Integer, WordDirection>) value;
+                    int box = result.first;
+                    WordDirection direction = result.second;
 
-        if (name.equals(CrosswordMagicController.GRID_LETTERS_PROPERTY)) {
-            if (value instanceof Character[][]) {
-                this.letters = (Character[][]) value;
-                Log.d("DEBUG", "CrosswordGridView Letters: " + Arrays.deepToString(letters));
-                invalidate();
-            }
-        }
 
-        if (name.equals(CrosswordMagicController.GRID_NUMBERS_PROPERTY)) {
-            if (value instanceof Integer[][]) {
-                this.numbers = (Integer[][]) value;
-                Log.d("DEBUG", "CrosswordGridView Numbers: " + Arrays.deepToString(numbers));
-                invalidate();
-            }
-        }
+                    String message = getResources().getString(R.string.toast_correct_guess, lastGuess.toUpperCase(), box, direction.toString());
+                    Toast toast = Toast.makeText(getRootView().getContext(), message, Toast.LENGTH_SHORT);
+                    toast.setGravity(android.view.Gravity.TOP | android.view.Gravity.CENTER_HORIZONTAL, 0, 200);
+                    toast.show();
 
-        if (name.equals(CrosswordMagicController.GRID_DIMENSION_PROPERTY)) {
-            if (value instanceof Integer[]) {
-                Integer[] dimension = (Integer[]) value;
-                this.gridHeight = dimension[0];
-                this.gridWidth = dimension[1];
-                Log.d("DEBUG", "CrosswordGridView Dimensions: " + gridHeight + " x " + gridWidth);
-                invalidate();
+                } else if (value instanceof Integer) {
+                    int box = (int) value;
+
+                    String message = getResources().getString(R.string.toast_wrong_guess, lastGuess.toUpperCase(), box);
+                    Toast toast = Toast.makeText(getRootView().getContext(), message, Toast.LENGTH_SHORT);
+                    toast.setGravity(android.view.Gravity.TOP | android.view.Gravity.CENTER_HORIZONTAL, 0, 200);
+                    toast.show();
+                }
+                break;
             }
+            case CrosswordMagicController.PUZZLE_SOLVED_PROPERTY:
+                if (value instanceof Boolean) {
+                    Toast toast = Toast.makeText(getContext(), "🎉 Congratulations! You completed the puzzle!", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 250);
+                    toast.show();
+                    break;
+                }
+
+
+
         }
     }
 
@@ -213,15 +232,60 @@ public class CrosswordGridView extends View implements AbstractView {
             if (eventX >= xBegin && eventX <= xEnd && eventY >= yBegin && eventY <= yEnd) {
                 int x = ((eventX - xBegin) / squareWidth);
                 int y = ((eventY - yBegin) / squareHeight);
-                int n = numbers[y][x];
-                if (n != 0) {
-                    String text = String.format(Locale.getDefault(),"X: %d, Y: %d, Box: %d", x, y, n);
-                    Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+                int boxNumber = numbers[y][x];
+                if (boxNumber != 0) {
+                    promptUserForGuess(boxNumber);
                 }
             }
             return false;
         }
+
+        // Prompt user for input
+        private void promptUserForGuess(int boxNumber) {
+            // Create dialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle(getResources().getString(R.string.dialog_title_enter_guess));
+
+            // Set up input field
+            final EditText inputField = new EditText(context);
+            inputField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+            builder.setView(inputField);
+
+            // Set up buttons
+            builder.setPositiveButton(getResources().getString(R.string.button_ok), (dialog, which) -> {
+                String input = inputField.getText().toString().trim().toUpperCase();
+                if (!input.isEmpty()) {
+                    lastGuess = input;
+                    CrosswordMagicController controller = ((MainActivity) context).getController();
+                    controller.checkGuess(boxNumber, input);
+                }
+            });
+
+            builder.setNegativeButton(getResources().getString(R.string.button_cancel), (dialog, which) -> dialog.cancel());
+            AlertDialog dialog = builder.create();
+
+            // Auto-submit when pressing DONE on keyboard
+            inputField.setOnEditorActionListener((v, actionId, event) -> {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+                    return true;
+                }
+                return false;
+            });
+
+            // Auto-open keyboard when dialog shows
+            dialog.setOnShowListener(dialogInterface -> {
+                inputField.requestFocus();
+                InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.showSoftInput(inputField, InputMethodManager.SHOW_IMPLICIT);
+                }
+            });
+            dialog.show();
+        }
     }
+
+
 
     // Getters for view updates
     public void setLetters(Character[][] letters) {

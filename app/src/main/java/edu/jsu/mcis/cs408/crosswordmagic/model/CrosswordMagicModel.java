@@ -2,6 +2,7 @@ package edu.jsu.mcis.cs408.crosswordmagic.model;
 
 import android.content.Context;
 import android.util.Log;
+import android.util.Pair;
 import edu.jsu.mcis.cs408.crosswordmagic.controller.CrosswordMagicController;
 import edu.jsu.mcis.cs408.crosswordmagic.model.dao.DAOFactory;
 import edu.jsu.mcis.cs408.crosswordmagic.model.dao.PuzzleDAO;
@@ -47,4 +48,55 @@ public class CrosswordMagicModel extends AbstractModel {
     public void getCluesDown() {
         firePropertyChange(CrosswordMagicController.CLUES_DOWN_PROPERTY, null, puzzle.getCluesDown());
     }
+
+    public void setPlayerGuess(Pair<Integer, String> input) {
+        Integer boxNumber = input.first;
+        String guess = input.second;
+        WordDirection direction = puzzle.checkGuess(boxNumber, guess);
+
+        if (direction != null) {
+            firePropertyChange(CrosswordMagicController.GUESS_RESULT_PROPERTY, null, new Pair<>(boxNumber, direction));
+        } else {
+            firePropertyChange(CrosswordMagicController.GUESS_RESULT_PROPERTY, null, boxNumber);
+        }
+
+        // Update the grid so the letters refresh
+        fireGridUpdates();
+    }
+
+
+    public void loadState(Context context) {
+        if (puzzle != null) {
+            puzzle.loadState(context);
+        }
+    }
+
+    public void saveState(Context context) {
+        if (puzzle != null) {
+            puzzle.saveState(context);
+        }
+    }
+
+    public Puzzle getPuzzle() {
+        return this.puzzle;
+    }
+
+    public void clearProgress(Context context) {
+        if (puzzle != null) {
+            puzzle.clearProgress(context);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

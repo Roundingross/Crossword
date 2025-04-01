@@ -1,7 +1,5 @@
 package edu.jsu.mcis.cs408.crosswordmagic.controller;
 
-import android.util.Log;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Method;
@@ -12,7 +10,7 @@ import edu.jsu.mcis.cs408.crosswordmagic.view.AbstractView;
 public abstract class AbstractController implements PropertyChangeListener {
 
     private final ArrayList<AbstractView> views;
-    private final ArrayList<AbstractModel> models;
+    protected final ArrayList<AbstractModel> models;
 
     public AbstractController() {
         views = new ArrayList<>();
@@ -20,7 +18,6 @@ public abstract class AbstractController implements PropertyChangeListener {
     }
 
     public void addModel(AbstractModel model) {
-        Log.d("DEBUG", "AbstractController: Controller Added Model: " + model.getClass().getSimpleName());
         models.add(model);
         model.addPropertyChangeListener(this);
     }
@@ -40,9 +37,7 @@ public abstract class AbstractController implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        Log.d("DEBUG", "Controller Property changed: " + evt.getPropertyName());
         for (AbstractView view : views) {
-            Log.d("DEBUG", "Notifying view: " + view.getClass().getSimpleName());
             view.modelPropertyChange(evt);
         }
     }
@@ -50,14 +45,19 @@ public abstract class AbstractController implements PropertyChangeListener {
     protected void setModelProperty(String propertyName, Object newValue) {
         for (AbstractModel model : models) {
             try {
-                Method method = model.getClass().getMethod("set" + propertyName, newValue.getClass());
-                method.invoke(model, newValue);
-            }
-            catch (Exception e) {
+                Method[] methods = model.getClass().getMethods();
+                for (Method method : methods) {
+                    if (method.getName().equals("set" + propertyName)) {
+                        method.invoke(model, newValue);
+                        break;
+                    }
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+
 
     protected void getModelProperty(String methodName) {
         for (AbstractModel model : models) {
@@ -72,7 +72,8 @@ public abstract class AbstractController implements PropertyChangeListener {
     }
 
     // Getters for view updates
-    protected ArrayList<AbstractView> getViews() {
-        return views;
-    }
+    protected ArrayList<AbstractView> getViews() { return views; }
+
+    // Getters for model updates
+    protected ArrayList<AbstractModel> getModels() { return models; }
 }
