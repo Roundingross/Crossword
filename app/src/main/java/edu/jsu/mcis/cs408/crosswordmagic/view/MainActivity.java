@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         controller.loadState(this);
     }
 
+    // Save puzzle progress
     @Override
     protected void onPause() {
         super.onPause();

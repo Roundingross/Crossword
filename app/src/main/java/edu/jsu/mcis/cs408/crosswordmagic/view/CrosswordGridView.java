@@ -164,18 +164,21 @@ public class CrosswordGridView extends View implements AbstractView {
         Object value = evt.getNewValue();
 
         switch (name) {
+            // Update view for letters
             case CrosswordMagicController.GRID_LETTERS_PROPERTY:
                 if (value instanceof Character[][]) {
                     this.letters = (Character[][]) value;
                     invalidate();
                 }
                 break;
+            // Update view for numbers
             case CrosswordMagicController.GRID_NUMBERS_PROPERTY:
                 if (value instanceof Integer[][]) {
                     this.numbers = (Integer[][]) value;
                     invalidate();
                 }
                 break;
+            // Update view for dimension
             case CrosswordMagicController.GRID_DIMENSION_PROPERTY:
                 if (value instanceof Integer[]) {
                     Integer[] dimension = (Integer[]) value;
@@ -184,7 +187,9 @@ public class CrosswordGridView extends View implements AbstractView {
                     invalidate();
                 }
                 break;
+            // Update view for guesses
             case CrosswordMagicController.GUESS_RESULT_PROPERTY: {
+                // Display toast message for correct guess
                 if (value instanceof android.util.Pair) {
                     android.util.Pair<Integer, WordDirection> result = (android.util.Pair<Integer, WordDirection>) value;
                     int box = result.first;
@@ -196,6 +201,7 @@ public class CrosswordGridView extends View implements AbstractView {
                     toast.setGravity(android.view.Gravity.TOP | android.view.Gravity.CENTER_HORIZONTAL, 0, 200);
                     toast.show();
 
+                // Display toast message for wrong guess
                 } else if (value instanceof Integer) {
                     int box = (int) value;
 
@@ -206,6 +212,7 @@ public class CrosswordGridView extends View implements AbstractView {
                 }
                 break;
             }
+            // Update view for puzzle solved
             case CrosswordMagicController.PUZZLE_SOLVED_PROPERTY:
                 if (value instanceof Boolean) {
                     Toast toast = Toast.makeText(getContext(), "🎉 Congratulations! You completed the puzzle!", Toast.LENGTH_LONG);

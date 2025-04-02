@@ -1,7 +1,6 @@
 package edu.jsu.mcis.cs408.crosswordmagic.model;
 
 import androidx.annotation.NonNull;
-
 import java.util.HashMap;
 import java.util.Objects;
 

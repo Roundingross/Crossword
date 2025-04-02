@@ -36,6 +36,7 @@ public class PuzzleFragment extends Fragment implements AbstractView {
         // Load grid data
         loadGrid();
 
+        // Clear button
         Button clearButton = view.findViewById(R.id.clear_button);
         clearButton.setOnClickListener(v -> {
             MainActivity activity = (MainActivity) getActivity();

@@ -80,21 +80,11 @@ public class CrosswordMagicController extends AbstractController implements Prop
     }
 
     // Getters for model updates
-    public void getGridLetters() {
-        getModelProperty("GridLetters");
-    }
-    public void getGridNumbers() {
-        getModelProperty("GridNumbers");
-    }
-    public void getGridDimensions() {
-        getModelProperty("GridDimension");
-    }
-    public void getCluesAcross() {
-        getModelProperty("CluesAcross");
-    }
-    public void getCluesDown() {
-        getModelProperty("CluesDown");
-    }
+    public void getGridLetters() { getModelProperty("GridLetters"); }
+    public void getGridNumbers() { getModelProperty("GridNumbers"); }
+    public void getGridDimensions() { getModelProperty("GridDimension"); }
+    public void getCluesAcross() { getModelProperty("CluesAcross"); }
+    public void getCluesDown() { getModelProperty("CluesDown"); }
 
     public Puzzle getPuzzle() {
         for (AbstractModel model : models) {
@@ -105,6 +95,7 @@ public class CrosswordMagicController extends AbstractController implements Prop
         return null;
     }
 
+    // Load state of progress
     public void loadState(Context context) {
         for (AbstractModel model : models) {
             if (model instanceof CrosswordMagicModel) {
@@ -113,6 +104,7 @@ public class CrosswordMagicController extends AbstractController implements Prop
         }
     }
 
+    // Save state of progress
     public void saveState(Context context) {
         for (AbstractModel model : models) {
             if (model instanceof CrosswordMagicModel) {
@@ -121,6 +113,7 @@ public class CrosswordMagicController extends AbstractController implements Prop
         }
     }
 
+    // Clear puzzle progress
     public void clearPuzzleProgress(Context context) {
         for (AbstractModel model : getModels()) {
             if (model instanceof CrosswordMagicModel) {

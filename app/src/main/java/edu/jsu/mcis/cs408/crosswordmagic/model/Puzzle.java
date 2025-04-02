@@ -89,6 +89,7 @@ public class Puzzle extends AbstractModel{
 
     }
 
+    // Check players guess
     public void setPlayerGuess(Pair<Integer, String> input) {
         int boxNumber = input.first;
         String guess = input.second;

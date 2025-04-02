@@ -49,11 +49,13 @@ public class CrosswordMagicModel extends AbstractModel {
         firePropertyChange(CrosswordMagicController.CLUES_DOWN_PROPERTY, null, puzzle.getCluesDown());
     }
 
+    // Check player guess and update the grid
     public void setPlayerGuess(Pair<Integer, String> input) {
         Integer boxNumber = input.first;
         String guess = input.second;
         WordDirection direction = puzzle.checkGuess(boxNumber, guess);
 
+        // Update the view with the result of the guess
         if (direction != null) {
             firePropertyChange(CrosswordMagicController.GUESS_RESULT_PROPERTY, null, new Pair<>(boxNumber, direction));
         } else {
@@ -64,39 +66,26 @@ public class CrosswordMagicModel extends AbstractModel {
         fireGridUpdates();
     }
 
-
+    // Load and save puzzle state
     public void loadState(Context context) {
         if (puzzle != null) {
             puzzle.loadState(context);
         }
     }
-
     public void saveState(Context context) {
         if (puzzle != null) {
             puzzle.saveState(context);
         }
     }
 
-    public Puzzle getPuzzle() {
-        return this.puzzle;
-    }
-
+    // Clear progress
     public void clearProgress(Context context) {
         if (puzzle != null) {
             puzzle.clearProgress(context);
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
+    public Puzzle getPuzzle() {
+        return this.puzzle;
+    }
 }
