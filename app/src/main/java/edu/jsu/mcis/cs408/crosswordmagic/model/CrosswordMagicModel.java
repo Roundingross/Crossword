@@ -9,9 +9,10 @@ import edu.jsu.mcis.cs408.crosswordmagic.model.dao.PuzzleDAO;
 
 public class CrosswordMagicModel extends AbstractModel {
     private final Puzzle puzzle;
+    DAOFactory daoFactory;
 
     public CrosswordMagicModel(Context context) {
-        DAOFactory daoFactory = new DAOFactory(context);
+        this.daoFactory = new DAOFactory(context);
         PuzzleDAO puzzleDAO = daoFactory.getPuzzleDAO();
         int DEFAULT_PUZZLE_ID = 1;
         this.puzzle = puzzleDAO.find(DEFAULT_PUZZLE_ID);
@@ -47,6 +48,12 @@ public class CrosswordMagicModel extends AbstractModel {
 
     public void getCluesDown() {
         firePropertyChange(CrosswordMagicController.CLUES_DOWN_PROPERTY, null, puzzle.getCluesDown());
+    }
+
+    public void getPuzzleList() {
+        PuzzleListItem[] list = daoFactory.getPuzzleDAO().list();
+        Log.d("Model", "Firing puzzle list to controller: " + list.length);
+        firePropertyChange(CrosswordMagicController.PUZZLE_LIST_PROPERTY, null, list);
     }
 
     // Check player guess and update the grid

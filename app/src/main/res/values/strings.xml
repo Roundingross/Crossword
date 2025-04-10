@@ -9,5 +9,9 @@
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
     <string name="clear_puzzle">Clear Puzzle</string>
+    <string name="crossword_magic_cover">Crossword Magic Cover</string>
+    <string name="button_play">Play</string>
+    <string name="puzzle_url">http://ec2-3-142-171-53.us-east-2.compute.amazonaws.com:8080/CrosswordMagicServer/puzzle</string>
+    <string name="get_new_puzzles">Get New Puzzles</string>
 
 </resources>

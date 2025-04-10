@@ -1,10 +1,8 @@
 package edu.jsu.mcis.cs408.crosswordmagic.model.dao;
 
 import android.content.Context;
-
 import java.io.InputStreamReader;
 import java.util.Properties;
-
 import edu.jsu.mcis.cs408.crosswordmagic.R;
 
 public class DAOProperties {

@@ -10,6 +10,7 @@ import edu.jsu.mcis.cs408.crosswordmagic.model.Puzzle;
 import edu.jsu.mcis.cs408.crosswordmagic.view.AbstractView;
 import edu.jsu.mcis.cs408.crosswordmagic.view.ClueFragment;
 import edu.jsu.mcis.cs408.crosswordmagic.view.PuzzleFragment;
+import edu.jsu.mcis.cs408.crosswordmagic.view.WelcomeActivity;
 
 public class CrosswordMagicController extends AbstractController implements PropertyChangeListener {
     public static final String GRID_LETTERS_PROPERTY = "GridLetters";
@@ -20,6 +21,7 @@ public class CrosswordMagicController extends AbstractController implements Prop
     public static final String PLAYER_GUESS_PROPERTY = "PlayerGuess";
     public static final String GUESS_RESULT_PROPERTY = "GuessResult";
     public static final String PUZZLE_SOLVED_PROPERTY = "PuzzleSolved";
+    public static final String PUZZLE_LIST_PROPERTY = "PuzzleList";
 
     // Handle model updates
     public void propertyChange(PropertyChangeEvent evt) {
@@ -69,6 +71,15 @@ public class CrosswordMagicController extends AbstractController implements Prop
 
                 puzzleView.updatePuzzle(letters, numbers, dimension);
             }
+
+            // WelcomeActivity updates
+            else if (view instanceof WelcomeActivity) {
+                for (AbstractModel model : getModels()) {
+                    if (model instanceof CrosswordMagicModel) {
+                        view.modelPropertyChange(evt);
+                    }
+                }
+            }
         }
     }
 
@@ -85,6 +96,7 @@ public class CrosswordMagicController extends AbstractController implements Prop
     public void getGridDimensions() { getModelProperty("GridDimension"); }
     public void getCluesAcross() { getModelProperty("CluesAcross"); }
     public void getCluesDown() { getModelProperty("CluesDown"); }
+    public void getPuzzleList() { getModelProperty("PuzzleList"); }
 
     public Puzzle getPuzzle() {
         for (AbstractModel model : models) {

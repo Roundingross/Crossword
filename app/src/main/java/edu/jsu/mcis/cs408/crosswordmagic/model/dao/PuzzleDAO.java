@@ -3,11 +3,13 @@ package edu.jsu.mcis.cs408.crosswordmagic.model.dao;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import edu.jsu.mcis.cs408.crosswordmagic.model.Puzzle;
+import edu.jsu.mcis.cs408.crosswordmagic.model.PuzzleListItem;
 import edu.jsu.mcis.cs408.crosswordmagic.model.Word;
 import edu.jsu.mcis.cs408.crosswordmagic.model.WordDirection;
 
@@ -106,5 +108,32 @@ public class PuzzleDAO {
             }
         }
         return puzzle;
+    }
+
+    public PuzzleListItem[] list() {
+        SQLiteDatabase db = daoFactory.getWritableDatabase();
+        PuzzleListItem[] result = list(db);
+        db.close();
+        return result;
+    }
+
+    public PuzzleListItem[] list(SQLiteDatabase db) {
+        ArrayList<PuzzleListItem> puzzles = new ArrayList<>();
+        String query = daoFactory.getProperty("sql_get_puzzles");
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(0);
+                String name = cursor.getString(1);
+                puzzles.add(new PuzzleListItem(id, name));
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+
+        Log.d("PuzzleDAO", "Loaded puzzles: " + puzzles.size());
+
+        return puzzles.toArray(new PuzzleListItem[]{});
     }
 }
