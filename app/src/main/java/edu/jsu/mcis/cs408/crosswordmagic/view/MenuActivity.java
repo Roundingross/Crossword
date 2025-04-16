@@ -1,79 +1,57 @@
 package edu.jsu.mcis.cs408.crosswordmagic.view;
 
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import java.io.InputStreamReader;
-import java.io.InputStream;
-import java.io.BufferedReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import edu.jsu.mcis.cs408.crosswordmagic.R;
+import edu.jsu.mcis.cs408.crosswordmagic.controller.CrosswordMagicController;
+import edu.jsu.mcis.cs408.crosswordmagic.model.CrosswordMagicModel;
 import edu.jsu.mcis.cs408.crosswordmagic.model.PuzzleMenuItem;
 import edu.jsu.mcis.cs408.crosswordmagic.controller.MenuAdapter;
 
-public class MenuActivity extends AppCompatActivity {
-    // RecyclerView and adapter
+public class MenuActivity extends AppCompatActivity implements AbstractView, MenuAdapter.OnPuzzleSelectedListener {
     private RecyclerView recyclerView;
     private MenuAdapter adapter;
+    private CrosswordMagicController controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        // Initialize RecyclerView
+        controller = new CrosswordMagicController();
+        CrosswordMagicModel model = new CrosswordMagicModel(this);
+        controller.addModel(model);
+        controller.addView(this);
+
         recyclerView = findViewById(R.id.menuRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Start fetching puzzle list from server
-        new FetchPuzzleList().execute();
+        controller.getPuzzleMenu();
     }
 
-    // AsyncTask to fetch puzzle list from server
-    private class FetchPuzzleList extends AsyncTask<Void, Void, ArrayList<PuzzleMenuItem>> {
-        @Override
-        protected ArrayList<PuzzleMenuItem> doInBackground(Void... voids) {
-            ArrayList<PuzzleMenuItem> puzzles = new ArrayList<>();
-            try {
-                // Fetch puzzle list from server
-                URL url = new URL(getString(R.string.puzzle_url));
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-
-                // Read response
-                InputStream in = conn.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                StringBuilder result = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    result.append(line);
-                }
-
-                // Parse JSON response
-                JSONArray jsonArray = new JSONArray(result.toString());
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject puzzle = jsonArray.getJSONObject(i);
-                    int id = puzzle.getInt("id");
-                    String name = puzzle.getString("name");
-                    puzzles.add(new PuzzleMenuItem(id, name));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return puzzles;
-        }
-
-        // Update RecyclerView with puzzle list
-        @Override
-        protected void onPostExecute(ArrayList<PuzzleMenuItem> puzzles) {
-            adapter = new MenuAdapter(MenuActivity.this, puzzles);
+    // Receives data from model and updates RecyclerView
+    @Override
+    public void modelPropertyChange(PropertyChangeEvent evt) {
+        if (CrosswordMagicController.PUZZLE_MENU_PROPERTY.equals(evt.getPropertyName())) {
+            PuzzleMenuItem[] menuItems = (PuzzleMenuItem[]) evt.getNewValue();
+            ArrayList<PuzzleMenuItem> list = new ArrayList<>(Arrays.asList(menuItems));
+            adapter = new MenuAdapter(this, list, this);  // Pass listener
             recyclerView.setAdapter(adapter);
         }
+    }
+
+    // Called when user taps "Download and Play"
+    @Override
+    public void onPuzzleSelected(PuzzleMenuItem item) {
+        Intent intent = new Intent(this, MainActivity.class);
+        // Pass selected puzzle ID
+        intent.putExtra("puzzleid", item.getId());
+        startActivity(intent);
     }
 }

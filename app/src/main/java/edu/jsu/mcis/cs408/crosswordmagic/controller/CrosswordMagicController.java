@@ -22,8 +22,10 @@ public class CrosswordMagicController extends AbstractController implements Prop
     public static final String GUESS_RESULT_PROPERTY = "GuessResult";
     public static final String PUZZLE_SOLVED_PROPERTY = "PuzzleSolved";
     public static final String PUZZLE_LIST_PROPERTY = "PuzzleList";
+    public static final String PUZZLE_MENU_PROPERTY = "PuzzleMenu";
 
     // Handle model updates
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         super.propertyChange(evt);
         String propertyName = evt.getPropertyName();
@@ -31,8 +33,14 @@ public class CrosswordMagicController extends AbstractController implements Prop
 
         for (AbstractView view : getViews()) {
 
-            // Handle guess result for all views
-            if (propertyName.equals(GUESS_RESULT_PROPERTY)) {
+            // Guess Result and Puzzle Menu updates
+            if (propertyName.equals(GUESS_RESULT_PROPERTY) || propertyName.equals(PUZZLE_MENU_PROPERTY)) {
+                view.modelPropertyChange(evt);
+                continue;
+            }
+
+            // WelcomeActivity updates
+            if (view instanceof WelcomeActivity && propertyName.equals(PUZZLE_LIST_PROPERTY)) {
                 view.modelPropertyChange(evt);
                 continue;
             }
@@ -40,48 +48,32 @@ public class CrosswordMagicController extends AbstractController implements Prop
             // ClueFragment updates
             if (view instanceof ClueFragment) {
                 ClueFragment clueView = (ClueFragment) view;
-                switch (propertyName) {
-                    case CLUES_ACROSS_PROPERTY:
-                        clueView.updateClues((String) newValue, null);
-                        break;
-                    case CLUES_DOWN_PROPERTY:
-                        clueView.updateClues(null, (String) newValue);
-                        break;
+                if (propertyName.equals(CLUES_ACROSS_PROPERTY)) {
+                    clueView.updateClues((String) newValue, null);
+                } else if (propertyName.equals(CLUES_DOWN_PROPERTY)) {
+                    clueView.updateClues(null, (String) newValue);
                 }
+                continue;
             }
 
             // PuzzleFragment updates
-            else if (view instanceof PuzzleFragment) {
+            if (view instanceof PuzzleFragment) {
                 PuzzleFragment puzzleView = (PuzzleFragment) view;
-                Character[][] letters = null;
-                Integer[][] numbers = null;
-                Integer[] dimension = null;
-
                 switch (propertyName) {
                     case GRID_LETTERS_PROPERTY:
-                        letters = (Character[][]) newValue;
+                        puzzleView.updatePuzzle((Character[][]) newValue, null, null);
                         break;
                     case GRID_NUMBERS_PROPERTY:
-                        numbers = (Integer[][]) newValue;
+                        puzzleView.updatePuzzle(null, (Integer[][]) newValue, null);
                         break;
                     case GRID_DIMENSION_PROPERTY:
-                        dimension = (Integer[]) newValue;
+                        puzzleView.updatePuzzle(null, null, (Integer[]) newValue);
                         break;
-                }
-
-                puzzleView.updatePuzzle(letters, numbers, dimension);
-            }
-
-            // WelcomeActivity updates
-            else if (view instanceof WelcomeActivity) {
-                for (AbstractModel model : getModels()) {
-                    if (model instanceof CrosswordMagicModel) {
-                        view.modelPropertyChange(evt);
-                    }
                 }
             }
         }
     }
+
 
 
     // Checks guess
@@ -105,6 +97,14 @@ public class CrosswordMagicController extends AbstractController implements Prop
             }
         }
         return null;
+    }
+
+    public void getPuzzleMenu() {
+        for (AbstractModel model : models) {
+            if (model instanceof CrosswordMagicModel) {
+                ((CrosswordMagicModel) model).getPuzzleMenu();
+            }
+        }
     }
 
     // Load state of progress

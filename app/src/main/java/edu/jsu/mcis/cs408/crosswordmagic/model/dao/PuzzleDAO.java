@@ -132,7 +132,7 @@ public class PuzzleDAO {
 
         cursor.close();
 
-        Log.d("PuzzleDAO", "Loaded puzzles: " + puzzles.size());
+        Log.d("DEBUG", "Loaded puzzles: " + puzzles.size());
 
         return puzzles.toArray(new PuzzleListItem[]{});
     }

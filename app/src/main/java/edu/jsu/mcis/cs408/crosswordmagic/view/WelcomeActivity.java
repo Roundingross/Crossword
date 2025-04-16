@@ -8,9 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-
 import java.beans.PropertyChangeEvent;
-
 import edu.jsu.mcis.cs408.crosswordmagic.R;
 import edu.jsu.mcis.cs408.crosswordmagic.controller.CrosswordMagicController;
 import edu.jsu.mcis.cs408.crosswordmagic.databinding.ActivityWelcomeBinding;
@@ -67,7 +65,7 @@ public class WelcomeActivity extends AppCompatActivity implements AbstractView, 
         if (name.equals(CrosswordMagicController.PUZZLE_LIST_PROPERTY)) {
             if (value instanceof PuzzleListItem[]) {
                 PuzzleListItem[] puzzles = (PuzzleListItem[])value;
-                Log.d("WelcomeActivity", "Received puzzle list with " + puzzles.length + " puzzles.");
+                Log.d("DEBUG", "Received puzzle list with " + puzzles.length + " puzzles.");
                 ArrayAdapter<PuzzleListItem> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, puzzles);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 binding.spinner.setAdapter(adapter);

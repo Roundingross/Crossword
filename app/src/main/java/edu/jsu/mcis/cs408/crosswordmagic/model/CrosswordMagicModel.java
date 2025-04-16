@@ -52,8 +52,14 @@ public class CrosswordMagicModel extends AbstractModel {
 
     public void getPuzzleList() {
         PuzzleListItem[] list = daoFactory.getPuzzleDAO().list();
-        Log.d("Model", "Firing puzzle list to controller: " + list.length);
+        Log.d("DEBUG", "Firing puzzle list to controller: " + list.length);
         firePropertyChange(CrosswordMagicController.PUZZLE_LIST_PROPERTY, null, list);
+    }
+
+    public void getPuzzleMenu() {
+        PuzzleMenuItem[] list = daoFactory.getWebServiceDAO().list();
+        Log.d("DEBUG", "Firing puzzle menu to controller: " + list.length);
+        firePropertyChange(CrosswordMagicController.PUZZLE_MENU_PROPERTY, null, list);
     }
 
     // Check player guess and update the grid

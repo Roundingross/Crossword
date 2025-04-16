@@ -4,17 +4,14 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
-
 import edu.jsu.mcis.cs408.crosswordmagic.R;
 import edu.jsu.mcis.cs408.crosswordmagic.model.Puzzle;
 import edu.jsu.mcis.cs408.crosswordmagic.model.Word;
@@ -27,6 +24,7 @@ public class DAOFactory extends SQLiteOpenHelper {
 
     private static final int CSV_HEADER_FIELDS = 4;
     private static final int CSV_DATA_FIELDS = 6;
+    private WebServiceDAO webServiceDAO;
 
     public DAOFactory(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -61,6 +59,13 @@ public class DAOFactory extends SQLiteOpenHelper {
 
     public String getProperty(String key) {
         return (properties.getProperty(key));
+    }
+
+    public WebServiceDAO getWebServiceDAO() {
+        if (webServiceDAO == null) {
+            webServiceDAO = new WebServiceDAO();
+        }
+        return webServiceDAO;
     }
 
     public void addInitialDataFromCSV(SQLiteDatabase db) {
