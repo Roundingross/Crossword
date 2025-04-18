@@ -52,10 +52,12 @@ public class PuzzleDAO {
         SQLiteDatabase db = daoFactory.getWritableDatabase();
         Puzzle result = find(db, puzzleid);
         db.close();
+        result.setId(puzzleid);
         return result;
     }
 
     public Puzzle find(SQLiteDatabase db, int puzzleid) {
+        Log.d("DEBUG", "PuzzleDAO.find(): Getting puzzle ID " + puzzleid);
         /* use this method if there is NOT already a SQLiteDatabase open */
         Puzzle puzzle = null;
         String query = daoFactory.getProperty("sql_get_puzzle");
@@ -78,16 +80,15 @@ public class PuzzleDAO {
             }
             cursor.close();
 
-
-            if ( !params.isEmpty() )
-                puzzle = new Puzzle(params);
-
             /* get list of words (if any) to add to puzzle */
             WordDAO wordDao = daoFactory.getWordDAO();
             ArrayList<Word> words = wordDao.list(db, puzzleid);
 
-            if ( !words.isEmpty() )
+            if (!words.isEmpty()) {
                 puzzle.addWordsToPuzzle(words);
+                Log.d("DEBUG", "PuzzleDAO.find(): Added " + words.size() + " words to puzzle ID: " + puzzleid);
+            }
+
 
             cursor.close();
 
@@ -107,6 +108,7 @@ public class PuzzleDAO {
                 cursor.close();
             }
         }
+        puzzle.setId(puzzleid);
         return puzzle;
     }
 
@@ -119,7 +121,7 @@ public class PuzzleDAO {
 
     public PuzzleListItem[] list(SQLiteDatabase db) {
         ArrayList<PuzzleListItem> puzzles = new ArrayList<>();
-        String query = daoFactory.getProperty("sql_get_puzzles");
+        String query = daoFactory.getProperty("sql_list_puzzles");
         Cursor cursor = db.rawQuery(query, null);
 
         if (cursor.moveToFirst()) {

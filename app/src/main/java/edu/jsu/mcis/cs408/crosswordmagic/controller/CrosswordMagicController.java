@@ -1,6 +1,7 @@
 package edu.jsu.mcis.cs408.crosswordmagic.controller;
 
 import android.content.Context;
+import android.util.Log;
 import android.util.Pair;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -23,6 +24,8 @@ public class CrosswordMagicController extends AbstractController implements Prop
     public static final String PUZZLE_SOLVED_PROPERTY = "PuzzleSolved";
     public static final String PUZZLE_LIST_PROPERTY = "PuzzleList";
     public static final String PUZZLE_MENU_PROPERTY = "PuzzleMenu";
+    public static final String DOWNLOAD_PUZZLE_PROPERTY = "DownloadPuzzle";
+    public static final String PUZZLE_READY_PROPERTY = "PuzzleReady";
 
     // Handle model updates
     @Override
@@ -32,6 +35,12 @@ public class CrosswordMagicController extends AbstractController implements Prop
         Object newValue = evt.getNewValue();
 
         for (AbstractView view : getViews()) {
+
+            // Puzzle Downloaded update
+            if (propertyName.equals(PUZZLE_READY_PROPERTY)) {
+                view.modelPropertyChange(evt);
+                continue;
+            }
 
             // Guess Result and Puzzle Menu updates
             if (propertyName.equals(GUESS_RESULT_PROPERTY) || propertyName.equals(PUZZLE_MENU_PROPERTY)) {
@@ -99,6 +108,7 @@ public class CrosswordMagicController extends AbstractController implements Prop
         return null;
     }
 
+    // Get puzzle list from database
     public void getPuzzleMenu() {
         for (AbstractModel model : models) {
             if (model instanceof CrosswordMagicModel) {
@@ -106,6 +116,13 @@ public class CrosswordMagicController extends AbstractController implements Prop
             }
         }
     }
+
+    // Get puzzle from web service
+    public void downloadPuzzle(int webId) {
+        setModelProperty(DOWNLOAD_PUZZLE_PROPERTY, webId);
+        Log.d("DEBUG", "Controller is sending download puzzle request: " + webId);
+    }
+
 
     // Load state of progress
     public void loadState(Context context) {

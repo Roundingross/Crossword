@@ -2,6 +2,7 @@ package edu.jsu.mcis.cs408.crosswordmagic.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.util.Pair;
 
 import java.util.ArrayList;
@@ -24,9 +25,12 @@ public class Puzzle extends AbstractModel{
     private boolean solved = false;
     private final StringBuilder cluesAcrossBuffer, cluesDownBuffer;
     private boolean isSolved = false;
+    private final HashMap<String, String> guesses = new HashMap<>();
+
     private static final String PREFS_NAME = "CrosswordMagic";
     private static final String KEY_GUESSED_WORDS = "guessed_words";
     private static final String KEY_LETTERS_GRID = "letters_grid";
+    private Integer id;
 
     public Puzzle(HashMap<String, String> params) {
         this.name = params.get("name");
@@ -57,7 +61,13 @@ public class Puzzle extends AbstractModel{
     }
 
     public void addWordToPuzzle(Word word) {
-        String key = (word.getBox() + word.getDirection().toString());
+        WordDirection dir = word.getDirection();
+        if (dir == null) {
+            Log.d("DEBUG", "Null direction in word: " + word);
+            return; // Skip this word to avoid crashing
+        }
+        String key = (word.getBox() + dir.toString());
+
         /* add to collection */
         words.put(key, word);
         /* get word properties */
@@ -144,6 +154,7 @@ public class Puzzle extends AbstractModel{
     public void addWordToGuessed(String key) {
         Word w = words.get(key);
         guessed.add(key);
+        guesses.put(key, w.getWord());
         /* get word properties */
         int row = w.getRow();
         int column = w.getColumn();
@@ -161,66 +172,44 @@ public class Puzzle extends AbstractModel{
 
     // Saved state for return use
     public void saveState(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences("CrosswordMagic", Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences("CrosswordPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(KEY_GUESSED_WORDS, String.join(",", guessed));
 
-        StringBuilder gridBuilder = new StringBuilder();
-        for (int i = 0; i < height; ++i) {
-            for (int j = 0; j < width; ++j) {
-                gridBuilder.append(letters[i][j]);
-            }
+        for (String key : guesses.keySet()) {
+            editor.putString("guess_" + id + "_" + key, guesses.get(key));
         }
-        editor.putString(KEY_LETTERS_GRID, gridBuilder.toString());
+
         editor.apply();
     }
 
+
     // Load state from saved state
     public void loadState(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences("CrosswordMagic", Context.MODE_PRIVATE);
-        String guessedWords = prefs.getString(KEY_GUESSED_WORDS, "");
-        if (!guessedWords.isEmpty()) {
-            String[] keys = guessedWords.split(",");
-            for (String key : keys) {
-                addWordToGuessed(key);
+        SharedPreferences prefs = context.getSharedPreferences("CrosswordPrefs", Context.MODE_PRIVATE);
+
+        for (String key : words.keySet()) {
+            String saved = prefs.getString("guess_" + id + "_" + key, null);
+            if (saved != null) {
+                guesses.put(key, saved);
+                addWordToGuessed(key); // This puts the letters back on the grid too
             }
         }
-        String grid = prefs.getString(KEY_LETTERS_GRID, "");
-        if (!grid.isEmpty() && grid.length() == height * width) {
-            int index = 0;
-            for (int i = 0; i < height; ++i) {
-                for (int j = 0; j < width; ++j) {
-                    letters[i][j] = grid.charAt(index);
-                    index++;
-                }
-            }
-        }
-        firePropertyChange(CrosswordMagicController.GRID_LETTERS_PROPERTY, null, letters);
-        firePropertyChange(CrosswordMagicController.GRID_NUMBERS_PROPERTY, null, numbers);
-        firePropertyChange(CrosswordMagicController.GRID_DIMENSION_PROPERTY, null, new Integer[]{height, width});
     }
+
+
 
     // Clear progress of puzzle
     public void clearProgress(Context context) {
-        guessed.clear();
-        for (int i = 0; i < height; ++i) {
-            for (int j = 0; j < width; ++j) {
-                if (letters[i][j] != BLOCK_CHAR) {
-                    letters[i][j] = BLANK_CHAR;
-                }
-            }
+        SharedPreferences prefs = context.getSharedPreferences("CrosswordPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        for (String key : guesses.keySet()) {
+            editor.remove("guess_" + id + "_" + key);
         }
 
-        // Clear SharedPreferences
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        prefs.edit().clear().apply();
-
-        // Clear solved
-        solved = false;
-        isSolved = false;
-
-        firePropertyChange(CrosswordMagicController.GRID_LETTERS_PROPERTY, null, letters);
+        editor.apply();
     }
+
 
 
     public Word getWord(String key) { return words.get(key); }
@@ -244,4 +233,14 @@ public class Puzzle extends AbstractModel{
     public Integer[][] getNumbers() { return numbers; }
 
     public boolean isSolved() { return solved; }
+    public Integer getId() {
+        return id;
+    }
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    public HashMap<String, String> getGuesses() {
+        return guesses;
+    }
+
 }

@@ -28,7 +28,7 @@ public class WelcomeActivity extends AppCompatActivity implements AbstractView, 
         binding = ActivityWelcomeBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-        binding.button.setOnClickListener(this);
+        binding.playButton.setOnClickListener(this);
         binding.spinner.setOnItemSelectedListener(this);
 
         /* Create Controller and Model */
@@ -41,6 +41,7 @@ public class WelcomeActivity extends AppCompatActivity implements AbstractView, 
 
         /* Request Puzzle List */
         controller.getPuzzleList();
+        Log.d("SPINNER", "onCreate: Requested puzzle list from controller");
 
         Button getButton = findViewById(R.id.get_button);
         getButton.setOnClickListener(v -> {
@@ -59,14 +60,16 @@ public class WelcomeActivity extends AppCompatActivity implements AbstractView, 
 
     @Override
     public void modelPropertyChange(PropertyChangeEvent evt) {
+        Log.d("SPINNER", "modelPropertyChange called with property: " + evt.getPropertyName());
         String name = evt.getPropertyName();
         Object value = evt.getNewValue();
 
         if (name.equals(CrosswordMagicController.PUZZLE_LIST_PROPERTY)) {
             if (value instanceof PuzzleListItem[]) {
                 PuzzleListItem[] puzzles = (PuzzleListItem[])value;
-                Log.d("DEBUG", "Received puzzle list with " + puzzles.length + " puzzles.");
+                Log.d("SPINNER", "Received puzzle list with " + puzzles.length + " puzzles.");
                 ArrayAdapter<PuzzleListItem> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, puzzles);
+                Log.d("SPINNER", "modelPropertyChange: Setting spinner with " + puzzles.length + " puzzles");
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 binding.spinner.setAdapter(adapter);
             }
@@ -76,6 +79,7 @@ public class WelcomeActivity extends AppCompatActivity implements AbstractView, 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         puzzleid = ((PuzzleListItem)adapterView.getItemAtPosition(i)).getId();
+        Log.d("SPINNER", "Spinner item selected: " + puzzleid);
     }
 
     @Override

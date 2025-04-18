@@ -72,4 +72,26 @@ public class WebServiceDAO {
             return result.toString().trim();
         }
     }
+
+    public JSONObject getPuzzleFromWeb(int webId) {
+        try {
+            String url = ROOT_URL + "?id=" + webId;
+            Log.d("DEBUG", "Calling URL: " + url);
+
+            ExecutorService pool = Executors.newSingleThreadExecutor();
+            Future<String> pending = pool.submit(new CallableHTTPRequest(url));
+            String response = pending.get();
+            pool.shutdown();
+
+            Log.d("DEBUG", "Web response: " + response); // <-- ADD THIS
+
+            return new JSONObject(response);
+        }
+        catch (Exception e) {
+            Log.d("WebServiceDAO", "Error retrieving puzzle by web ID", e);
+            return null;
+        }
+    }
+
+
 }

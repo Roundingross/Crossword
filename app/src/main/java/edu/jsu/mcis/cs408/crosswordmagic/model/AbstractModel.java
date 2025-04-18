@@ -1,5 +1,7 @@
 package edu.jsu.mcis.cs408.crosswordmagic.model;
 
+import android.util.Log;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -21,6 +23,6 @@ public abstract class AbstractModel {
 
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
         propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
+        Log.d("SPINNER", "firePropertyChange: " + propertyName);
     }
-
 }

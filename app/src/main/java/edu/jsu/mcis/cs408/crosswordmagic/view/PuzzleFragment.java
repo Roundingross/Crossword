@@ -1,5 +1,6 @@
 package edu.jsu.mcis.cs408.crosswordmagic.view;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,12 +40,19 @@ public class PuzzleFragment extends Fragment implements AbstractView {
         // Clear button
         Button clearButton = view.findViewById(R.id.clear_button);
         clearButton.setOnClickListener(v -> {
-            MainActivity activity = (MainActivity) getActivity();
-            if (activity != null) {
-                controller.clearPuzzleProgress(activity);
-            } else {
-                Log.e("PuzzleFragment", "MainActivity is null in clearButton click");
-            }
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Clear Progress")
+                    .setMessage("Are you sure you want to clear your progress?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        MainActivity activity = (MainActivity) getActivity();
+                        if (activity != null) {
+                            controller.clearPuzzleProgress(activity);
+                        } else {
+                            Log.e("PuzzleFragment", "MainActivity is null in clearButton click");
+                        }
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
         });
 
     }

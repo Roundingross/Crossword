@@ -2,6 +2,8 @@ package edu.jsu.mcis.cs408.crosswordmagic.view;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,20 +40,28 @@ public class MenuActivity extends AppCompatActivity implements AbstractView, Men
     // Receives data from model and updates RecyclerView
     @Override
     public void modelPropertyChange(PropertyChangeEvent evt) {
-        if (CrosswordMagicController.PUZZLE_MENU_PROPERTY.equals(evt.getPropertyName())) {
+        String name = evt.getPropertyName();
+
+        if (CrosswordMagicController.PUZZLE_MENU_PROPERTY.equals(name)) {
             PuzzleMenuItem[] menuItems = (PuzzleMenuItem[]) evt.getNewValue();
             ArrayList<PuzzleMenuItem> list = new ArrayList<>(Arrays.asList(menuItems));
-            adapter = new MenuAdapter(this, list, this);  // Pass listener
+            adapter = new MenuAdapter(this, list, this);
             recyclerView.setAdapter(adapter);
         }
+        else if (CrosswordMagicController.PUZZLE_READY_PROPERTY.equals(name)) {
+            int newPuzzleId = (int) evt.getNewValue();
+            Log.d("DEBUG", "MenuActivity received new puzzle ID: " + newPuzzleId);
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("puzzleid", newPuzzleId);
+            startActivity(intent);
+        }
     }
+
 
     // Called when user taps "Download and Play"
     @Override
     public void onPuzzleSelected(PuzzleMenuItem item) {
-        Intent intent = new Intent(this, MainActivity.class);
-        // Pass selected puzzle ID
-        intent.putExtra("puzzleid", item.getId());
-        startActivity(intent);
+        Log.d("DEBUG", "Download button pressed for puzzle ID: " + item.getId());
+        controller.downloadPuzzle(item.getId());
     }
 }

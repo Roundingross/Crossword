@@ -71,6 +71,10 @@ public class Word {
         return clue;
     }
 
+    public void setPuzzleId(int puzzleId) {
+        this.puzzleid = puzzleId;
+    }
+
     @NonNull
     public String toString() {
 
