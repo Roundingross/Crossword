@@ -47,14 +47,14 @@ public class PuzzleFragment extends Fragment implements AbstractView {
                         MainActivity activity = (MainActivity) getActivity();
                         if (activity != null) {
                             controller.clearPuzzleProgress(activity);
+                            Log.d("PuzzleFragment", "PuzzleFragment called controller.clearPuzzleProgress()");
                         } else {
-                            Log.e("PuzzleFragment", "MainActivity is null in clearButton click");
+                            Log.d("PuzzleFragment", "MainActivity is null in clearButton click");
                         }
                     })
                     .setNegativeButton("Cancel", null)
                     .show();
         });
-
     }
 
     // Load grid data

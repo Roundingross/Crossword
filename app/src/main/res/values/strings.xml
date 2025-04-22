@@ -3,7 +3,7 @@
     <string name="placeholder_text">"Number of Words in Default Puzzle: "</string>
     <string name="clue_header_across">Across</string>
     <string name="clue_header_down">Down</string>
-    <string name="dialog_title_enter_guess">Enter your guess</string>
+    <string name="dialog_title_enter_guess_for">Enter your guess for Box #%1$d</string>
     <string name="toast_correct_guess">"%1$s" was correct for Box %2$d (%3$s)!</string>
     <string name="toast_wrong_guess">"%1$s" was incorrect for Box %2$d.</string>
     <string name="button_ok">OK</string>

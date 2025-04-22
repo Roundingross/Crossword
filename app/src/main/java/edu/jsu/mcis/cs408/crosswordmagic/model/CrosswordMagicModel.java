@@ -127,12 +127,17 @@ public class CrosswordMagicModel extends AbstractModel {
             if (json != null) {
                 Log.d("DEBUG", "Parsing JSON from web puzzle...");
 
+                String name = json.getString("name");
+                String description = json.getString("description");
+                String height = json.getString("height");
+                String width = json.getString("width");
+
                 // Puzzle metadata
                 HashMap<String, String> params = new HashMap<>();
-                params.put(Objects.requireNonNull(daoFactory.getProperty("sql_field_name")), "Web Puzzle " + webId);
-                params.put(Objects.requireNonNull(daoFactory.getProperty("sql_field_description")), "Downloaded puzzle " + webId);
-                params.put(Objects.requireNonNull(daoFactory.getProperty("sql_field_height")), "15");
-                params.put(Objects.requireNonNull(daoFactory.getProperty("sql_field_width")), "15");
+                params.put(Objects.requireNonNull(daoFactory.getProperty("sql_field_name")), "Web Puzzle " + name);
+                params.put(Objects.requireNonNull(daoFactory.getProperty("sql_field_description")), "Downloaded puzzle " + description);
+                params.put(Objects.requireNonNull(daoFactory.getProperty("sql_field_height")), height);
+                params.put(Objects.requireNonNull(daoFactory.getProperty("sql_field_width")), width);
 
                 Puzzle newPuzzle = new Puzzle(params);
                 int puzzleId = daoFactory.getPuzzleDAO().create(newPuzzle);
@@ -209,6 +214,7 @@ public class CrosswordMagicModel extends AbstractModel {
 
     public void clearProgress(Context context) {
         if (puzzle != null) {
+            Log.d("PuzzleFragment", "Model called puzzle.clearProgress()");
             puzzle.clearProgress(context);
         }
     }

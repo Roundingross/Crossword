@@ -251,7 +251,7 @@ public class CrosswordGridView extends View implements AbstractView {
         private void promptUserForGuess(int boxNumber) {
             // Create dialog
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle(getResources().getString(R.string.dialog_title_enter_guess));
+            builder.setTitle(context.getString(R.string.dialog_title_enter_guess_for, boxNumber));
 
             // Set up input field
             final EditText inputField = new EditText(context);

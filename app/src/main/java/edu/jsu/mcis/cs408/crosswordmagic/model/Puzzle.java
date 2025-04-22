@@ -200,6 +200,8 @@ public class Puzzle extends AbstractModel{
 
     // Clear progress of puzzle
     public void clearProgress(Context context) {
+        Log.d("PuzzleFragment", "clearProgress() called in Puzzle.java");
+
         SharedPreferences prefs = context.getSharedPreferences("CrosswordPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
 
@@ -208,7 +210,19 @@ public class Puzzle extends AbstractModel{
         }
 
         editor.apply();
+        guesses.clear();
+        guessed.clear();
+
+        // Reset letters back to BLANK_CHAR where they were filled in
+        for (int i = 0; i < height; ++i) {
+            for (int j = 0; j < width; ++j) {
+                if (letters[i][j] != BLOCK_CHAR) {
+                    letters[i][j] = BLANK_CHAR;
+                }
+            }
+        }
     }
+
 
 
 

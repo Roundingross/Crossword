@@ -143,17 +143,15 @@ public class CrosswordMagicController extends AbstractController implements Prop
     public void clearPuzzleProgress(Context context) {
         for (AbstractModel model : getModels()) {
             if (model instanceof CrosswordMagicModel) {
-                Puzzle puzzle = ((CrosswordMagicModel) model).getPuzzle();
-                if (puzzle != null) {
-                    puzzle.clearProgress(context);
-
-                    // Refresh views with empty state
-                    getGridLetters();
-                    getGridNumbers();
-                    getGridDimensions();
-                }
+                ((CrosswordMagicModel) model).clearProgress(context);
+                Log.d("PuzzleFragment", "Controller called model.clearProgress()");
+                // Refresh views with empty state
+                getGridLetters();
+                getGridNumbers();
+                getGridDimensions();
             }
         }
     }
+
 
 }

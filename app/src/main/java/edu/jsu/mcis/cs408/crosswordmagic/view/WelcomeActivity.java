@@ -64,6 +64,7 @@ public class WelcomeActivity extends AppCompatActivity implements AbstractView, 
         String name = evt.getPropertyName();
         Object value = evt.getNewValue();
 
+        // Populate spinner with puzzle list
         if (name.equals(CrosswordMagicController.PUZZLE_LIST_PROPERTY)) {
             if (value instanceof PuzzleListItem[]) {
                 PuzzleListItem[] puzzles = (PuzzleListItem[])value;

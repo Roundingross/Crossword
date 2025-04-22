@@ -139,6 +139,7 @@ public class PuzzleDAO {
         return puzzles.toArray(new PuzzleListItem[]{});
     }
 
+    // Find a puzzle by name (helper for duplicate check)
     public Puzzle findByName(String name) {
         SQLiteDatabase db = daoFactory.getWritableDatabase();
         Puzzle result = null;

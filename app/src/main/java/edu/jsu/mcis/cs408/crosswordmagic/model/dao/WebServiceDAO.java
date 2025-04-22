@@ -20,6 +20,7 @@ public class WebServiceDAO {
     public WebServiceDAO() {
     }
 
+    // Get list of puzzles from web service
     public PuzzleMenuItem[] list() {
         PuzzleMenuItem[] result = null;
         try {
@@ -45,6 +46,7 @@ public class WebServiceDAO {
         return result;
     }
 
+    // Download puzzle from web service
     private static class CallableHTTPRequest implements Callable<String> {
         private final String url;
 
@@ -73,6 +75,7 @@ public class WebServiceDAO {
         }
     }
 
+    // Get puzzle from web service
     public JSONObject getPuzzleFromWeb(int webId) {
         try {
             String url = ROOT_URL + "?id=" + webId;
@@ -83,7 +86,7 @@ public class WebServiceDAO {
             String response = pending.get();
             pool.shutdown();
 
-            Log.d("DEBUG", "Web response: " + response); // <-- ADD THIS
+            Log.d("DEBUG", "Web response: " + response);
 
             return new JSONObject(response);
         }
