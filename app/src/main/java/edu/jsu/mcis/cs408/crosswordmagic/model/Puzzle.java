@@ -191,7 +191,7 @@ public class Puzzle extends AbstractModel{
             String saved = prefs.getString("guess_" + id + "_" + key, null);
             if (saved != null) {
                 guesses.put(key, saved);
-                addWordToGuessed(key); // This puts the letters back on the grid too
+                addWordToGuessed(key);
             }
         }
     }

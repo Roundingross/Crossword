@@ -83,8 +83,6 @@ public class CrosswordMagicController extends AbstractController implements Prop
         }
     }
 
-
-
     // Checks guess
     public void checkGuess(int boxNumber, String guess) {
         Pair<Integer, String> input = new Pair<>(boxNumber, guess);
@@ -122,7 +120,6 @@ public class CrosswordMagicController extends AbstractController implements Prop
         setModelProperty(DOWNLOAD_PUZZLE_PROPERTY, webId);
         Log.d("DEBUG", "Controller is sending download puzzle request: " + webId);
     }
-
 
     // Load state of progress
     public void loadState(Context context) {

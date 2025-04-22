@@ -44,7 +44,6 @@ public class CrosswordMagicModel extends AbstractModel {
         }
     }
 
-
     // Individual grid and clue getters
     public void getGridLetters() {
         firePropertyChange(CrosswordMagicController.GRID_LETTERS_PROPERTY, null, puzzle.getLetters());
@@ -86,9 +85,6 @@ public class CrosswordMagicModel extends AbstractModel {
         }
     }
 
-
-
-
     // Load puzzle menu from the web
     public void getPuzzleMenu() {
         PuzzleMenuItem[] list = daoFactory.getWebServiceDAO().list();
@@ -113,6 +109,17 @@ public class CrosswordMagicModel extends AbstractModel {
 
     // Download and store puzzle from web service, update internal model and views
     public void downloadPuzzle(int webId) {
+        // Check for duplicates
+        String puzzleName = "Web Puzzle " + webId;
+        Puzzle existing = daoFactory.getPuzzleDAO().findByName(puzzleName);
+
+        // If duplicate, notify controller and return
+        if (existing != null) {
+            Log.d("DEBUG", "Puzzle already exists in database: " + puzzleName);
+            firePropertyChange(CrosswordMagicController.PUZZLE_READY_PROPERTY, null, existing.getId());
+            return;
+        }
+
         try {
             Log.d("DEBUG", "Starting downloadPuzzle() for web ID: " + webId);
             JSONObject json = daoFactory.getWebServiceDAO().getPuzzleFromWeb(webId);

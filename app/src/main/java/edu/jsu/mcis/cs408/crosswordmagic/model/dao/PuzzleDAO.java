@@ -138,4 +138,29 @@ public class PuzzleDAO {
 
         return puzzles.toArray(new PuzzleListItem[]{});
     }
+
+    public Puzzle findByName(String name) {
+        SQLiteDatabase db = daoFactory.getWritableDatabase();
+        Puzzle result = null;
+
+        String query = "SELECT * FROM " + daoFactory.getProperty("sql_table_puzzles") +
+                " WHERE " + daoFactory.getProperty("sql_field_name") + " = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{name});
+
+        if (cursor.moveToFirst()) {
+            HashMap<String, String> params = new HashMap<>();
+            params.put(daoFactory.getProperty("sql_field_id"), cursor.getString(0));
+            params.put(daoFactory.getProperty("sql_field_name"), cursor.getString(1));
+            params.put(daoFactory.getProperty("sql_field_description"), cursor.getString(2));
+            params.put(daoFactory.getProperty("sql_field_height"), cursor.getString(3));
+            params.put(daoFactory.getProperty("sql_field_width"), cursor.getString(4));
+            result = new Puzzle(params);
+            result.setId(cursor.getInt(0));
+        }
+
+        cursor.close();
+        db.close();
+        return result;
+    }
+
 }
